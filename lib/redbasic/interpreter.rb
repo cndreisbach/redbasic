@@ -16,9 +16,14 @@ class Redbasic::Interpreter
   end
 
   def reset!
+    @functions = default_functions
     @env = {}
     @program = {}
     @data = []
+  end
+
+  def default_functions
+    {:SIN => lambda { |int, args| Number.new(Math.sin(args[0].beval)) }}
   end
 
   def load(filename)

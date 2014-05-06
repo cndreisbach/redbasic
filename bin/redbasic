@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'redbasic'
+
+interpreter = Redbasic::Interpreter.new
+
+if ARGV.length == 1
+  interpreter.load(ARGV.first)
+  interpreter.run
+end
