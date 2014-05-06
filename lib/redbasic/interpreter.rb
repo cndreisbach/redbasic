@@ -27,8 +27,16 @@ class Redbasic::Interpreter
   end
 
   def load(filename)
-    File.open(filename).each_line do |line|
-      beval_line(line.chomp)
+    File.open(filename) do |file|
+      file.each_line do |line|
+        beval_line(line.chomp)
+      end
+    end
+  end
+
+  def save(filename)
+    File.open(filename, "w") do |file|
+      list(file)
     end
   end
 
@@ -37,12 +45,12 @@ class Redbasic::Interpreter
   end
 
   def rm_line(lineno)
-    @program.del(lineno)
+    @program.delete(lineno)
   end
 
-  def list
+  def list(out = $stdout)
     program.keys.sort.each do |line|
-      puts "#{line} #{program[line].to_basic}"
+      out.puts "#{line} #{program[line].to_basic}"
     end
   end
 

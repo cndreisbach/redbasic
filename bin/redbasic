@@ -1,10 +1,26 @@
 #!/usr/bin/env ruby
 
 require 'redbasic'
-
-interpreter = Redbasic::Interpreter.new
+require 'redbasic/cli'
+require 'redbasic/version'
+require 'highline/import'
 
 if ARGV.length == 1
+  interpreter = Redbasic::Interpreter.new
   interpreter.load(ARGV.first)
   interpreter.run
+  exit 0
 end
+
+CLI = Redbasic::CLI.new
+
+def repl(prompt)
+  CLI.handle_input(ask(prompt) { |q|
+    q.readline = true
+  })
+end
+
+puts "RedBASIC v#{Redbasic::VERSION}"
+puts "OK"
+puts
+loop { repl("> ") }
