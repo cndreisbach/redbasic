@@ -74,6 +74,7 @@ module Redbasic
       when "-" then l - r
       when "*" then l * r
       when "/" then l / r
+      when "^" then l ** r
       end
     end
   end

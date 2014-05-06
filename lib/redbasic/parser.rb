@@ -65,8 +65,13 @@ module Redbasic
     }
    
     rule(:multitive) {
-      primary.as(:left) >> space? >> match('[*/]').as(:op) >> space? >> multitive.as(:right) |
-      primary
+      exponentive.as(:left) >> space? >> match('[*/]').as(:op) >> space? >> multitive.as(:right) |
+      exponentive
+    }
+
+    rule(:exponentive) {
+      primary.as(:left) >> space? >> str('^').as(:op) >> space? >> multitive.as(:right) |
+      primary 
     }
    
     rule(:primary) { parenthetic | number | varname }
