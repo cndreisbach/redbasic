@@ -45,7 +45,7 @@ class Redbasic::Interpreter
     linenos = program.keys.sort
 
     begin
-      @data = get_data    
+      @data = get_data
       @state = :running
       @current_line = nil
       @next_line = find_next_line(linenos)
@@ -90,8 +90,8 @@ class Redbasic::Interpreter
   def get_data
     data = []
 
-    program.sort.map { |line, command| 
-      command 
+    program.sort.map { |line, command|
+      command
     }.select { |command|
       command.is_a?(Redbasic::Data)
     }.each { |command|
@@ -112,7 +112,7 @@ class Redbasic::Interpreter
   end
 
   def beval_line(line)
-    ast = ast_line(line) 
+    ast = ast_line(line)
     ast.beval(self)
     self
   end

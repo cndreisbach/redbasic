@@ -36,11 +36,11 @@ module Redbasic
     }
 
     rule(:data) {
-      (keyword("DATA") >> list(value)).as(:data)
+      (keyword("DATA") >> list(number)).as(:data)
     }
 
     rule(:print) {
-      (keyword("PRINT") >> list(expr)).as(:print)
+      (keyword("PRINT") >> list((expr | string))).as(:print)
     }
 
     rule(:goto) {
@@ -53,17 +53,17 @@ module Redbasic
 
     rule(:terminate) { keyword("END").as(:terminate) }
 
-    rule(:expr) { (additive | parenthetic | string).as(:expr) }
-   
+    rule(:expr) { (additive | parenthetic).as(:expr) }
+
     rule(:parenthetic) {
       str("(") >> space? >> expr >> space? >> str(")")
     }
-   
+
     rule(:additive) {
       multitive.as(:left) >> space? >> match('[+-]').as(:op) >> space? >> additive.as(:right) |
       multitive
     }
-   
+
     rule(:multitive) {
       exponentive.as(:left) >> space? >> match('[*/]').as(:op) >> space? >> multitive.as(:right) |
       exponentive
@@ -71,15 +71,14 @@ module Redbasic
 
     rule(:exponentive) {
       primary.as(:left) >> space? >> str('^').as(:op) >> space? >> multitive.as(:right) |
-      primary 
+      primary
     }
-   
+
     rule(:primary) { parenthetic | number | varname }
-    rule(:value) { number | string }
 
     rule(:number) {
       ((str('-').maybe >>
-        ((digit.repeat(0) >> str(".") >> digit.repeat(1)) | 
+        ((digit.repeat(0) >> str(".") >> digit.repeat(1)) |
           digit.repeat(1))).as(:digits) >>
       factor.maybe).as(:number) >> space?
     }
@@ -91,7 +90,7 @@ module Redbasic
     rule(:string) {
       str('"') >> (
         str('\\') >> any |
-        str('"').absent? >> any 
+        str('"').absent? >> any
       ).repeat.as(:string) >> str('"') >> space?
     }
 
