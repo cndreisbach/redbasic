@@ -9,7 +9,7 @@ __________           ._____________    _____    _________.____________
 
 # RedBASIC
 
-RedBASIC is an implementation of [Dartmouth BASIC][] version 4, as specified in the [BASIC 4th Edition Manual, Jan 1968][manual]
+RedBASIC is an implementation of [Dartmouth BASIC][] version 4, as specified in the [BASIC 4th Edition Manual, Jan 1968][manual]. Current status: can run the first program in the manual.
 
 [Dartmouth BASIC]: http://en.wikipedia.org/wiki/Dartmouth_BASIC
 [manual]: http://bitsavers.trailing-edge.com/pdf/dartmouth/BASIC_4th_Edition_Jan68.pdf
@@ -34,7 +34,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-1. Fork it ( http://github.com/<my-github-username>/redbasic/fork )
+1. Fork it ( http://github.com/cndreisbach/redbasic/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

@@ -1,5 +1,7 @@
 require 'redbasic/parser'
 require 'redbasic/transformer'
+require 'redbasic/components'
+require 'parslet'
 
 class Redbasic::Interpreter
   attr_reader :env, :program, :current_line, :state, :next_line, :data
@@ -25,6 +27,14 @@ class Redbasic::Interpreter
     end
   end
 
+  def add_line(lineno, line)
+    @program[lineno] = ast_line(line)
+  end
+
+  def rm_line(lineno)
+    @program.del(lineno)
+  end
+
   def list
     program.keys.sort.each do |line|
       puts "#{line} #{program[line].to_basic}"
@@ -34,18 +44,22 @@ class Redbasic::Interpreter
   def run
     linenos = program.keys.sort
 
-    @data = get_data    
-    @state = :running
-    @current_line = nil
-    @next_line = find_next_line(linenos)
-
-    while running? && !@next_line.nil?
-      @current_line = linenos.find { |lineno| lineno >= next_line }
+    begin
+      @data = get_data    
+      @state = :running
+      @current_line = nil
       @next_line = find_next_line(linenos)
-      program[current_line].beval(self)
+
+      while running? && !@next_line.nil?
+        @current_line = linenos.find { |lineno| lineno >= next_line }
+        @next_line = find_next_line(linenos)
+        program[current_line].beval(self)
+      end
+    rescue Redbasic::Error => ex
+      puts ex.message
+    ensure
+      @state = :stopped
     end
-    
-    @state = :stopped
   end
 
   def [](key)
@@ -88,7 +102,13 @@ class Redbasic::Interpreter
   end
 
   def ast_line(line)
-    @transformer.apply(@parser.parse(line))
+    begin
+      @transformer.apply(@parser.parse(line))
+    rescue Parslet::ParseFailed
+      lineno = nil
+      line.match(/^\d+/) { |match| p match; lineno = match[0] }
+      raise Redbasic::Error.new("Syntax error", lineno)
+    end
   end
 
   def beval_line(line)

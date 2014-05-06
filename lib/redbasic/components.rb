@@ -1,4 +1,23 @@
 module Redbasic
+  class Error < RuntimeError
+    def initialize(message, int_or_line = nil)
+      @message = message
+      if int_or_line.respond_to?(:current_line)
+        @lineno = int_or_line.current_line
+      else
+        @lineno = int_or_line
+      end
+    end
+
+    def message
+      if @lineno
+        "#{@message} on #{@lineno}"
+      else
+        @message
+      end
+    end
+  end
+
   ProgLine = Struct.new(:line, :command) do
     def to_basic
       "#{line} #{command.to_basic}"
@@ -48,7 +67,7 @@ module Redbasic
       l = left.beval(int)
       r = right.beval(int)
       if !(l.is_a?(Numeric) && r.is_a?(Numeric))
-        raise "Both arguments to an operation must be numbers"
+        raise Error.new("Both arguments to an operation must be numbers", int)
       end
       case op
       when "+" then l + r
@@ -110,7 +129,7 @@ module Redbasic
       vars.each do |var|
         datum = int.data.shift
         if datum.nil?
-          int.stop!
+          raise Error.new("Out of data", int)
         else
           int[var.varname.to_sym] = datum.beval(int)
         end
