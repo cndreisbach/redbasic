@@ -9,7 +9,7 @@ __________           ._____________    _____    _________.____________
 
 # RedBASIC
 
-RedBASIC is an implementation of [Dartmouth BASIC][] version 4, as specified in the [BASIC 4th Edition Manual, Jan 1968][manual]. Current status: can run the first program in the manual.
+RedBASIC is an implementation of [Dartmouth BASIC][] version 4, as specified in the [BASIC 4th Edition Manual, Jan 1968][manual]. Current status: can run the first program in the manual + FOR/NEXT loops. 
 
 [Dartmouth BASIC]: http://en.wikipedia.org/wiki/Dartmouth_BASIC
 [manual]: http://bitsavers.trailing-edge.com/pdf/dartmouth/BASIC_4th_Edition_Jan68.pdf
@@ -34,8 +34,6 @@ Run `redbasic`.
 
 ## TODO
 
-* Implement `FOR/NEXT`
-  * Disallow cross-nested loops
 * Implement function calls and the default functions
   * SIN
   * COS
