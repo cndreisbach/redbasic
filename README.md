@@ -1,10 +1,10 @@
 ```
 __________           ._____________    _____    _________.____________  
-\______   \ ____   __| _/\______   \  /  _  \  /   _____/|   \_   ___ \ 
- |       _// __ \ / __ |  |    |  _/ /  /_\  \ \_____  \ |   /    \  \/ 
+\______   \ ____   __| _/\______   \  /  _  \  /   _____/|   \_   ___ \
+ |       _// __ \ / __ |  |    |  _/ /  /_\  \ \_____  \ |   /    \  \/
  |    |   \  ___// /_/ |  |    |   \/    |    \/        \|   \     \____
  |____|_  /\___  >____ |  |______  /\____|__  /_______  /|___|\______  /
-        \/     \/     \/         \/         \/        \/             \/                                                                                
+        \/     \/     \/         \/         \/        \/             \/
 ```
 
 # RedBASIC
@@ -30,12 +30,26 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Run `redbasic`.
 
-## Contributing
+## TODO
 
-1. Fork it ( http://github.com/cndreisbach/redbasic/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+* Implement `FOR/NEXT`
+  * Disallow cross-nested loops
+* Implement function calls and the default functions
+  * SIN
+  * COS
+  * TAN
+  * COT
+  * ATN
+  * EXP
+  * LOG
+  * ABS
+  * SQR
+* Implement other functions
+  * INT
+  * RND
+  * SGN
+  * NUM
+  * DET
+* Implement user-defined functions

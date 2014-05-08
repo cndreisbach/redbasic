@@ -22,32 +22,32 @@ module Redbasic
         @interpreter.reset
         puts
       when /^REMOVE\s+(\d+)$/i
-        @interpreter.rm_line($1.to_i)
+        @interpreter.rm_line(Regexp.last_match[1].to_i)
         puts
       when /^STATUS$/i
         puts @interpreter.state.to_s.upcase
         puts
       when /^LOAD\s+(.+)$/i
-        if File.exists?($1)
-          @interpreter.load($1)
-          @program_name = $1
+        if File.exist?(Regexp.last_match[1])
+          @interpreter.load(Regexp.last_match[1])
+          @program_name = Regexp.last_match[1]
         else
-          puts "NO FILE #{$1}"
+          puts "NO FILE #{Regexp.last_match[1]}"
         end
         puts
       when /^SAVE$/i
         if @program_name
           @interpreter.save(@program_name)
         else
-          puts "NO PROGRAM NAME"
+          puts 'NO PROGRAM NAME'
         end
         puts
       when /^SAVE\s+(.+)$/i
         begin
-          @interpreter.save($1)
-          @program_name = $1
+          @interpreter.save(Regexp.last_match[1])
+          @program_name = Regexp.last_match[1]
         rescue
-          "BAD FILENAME #{$1}"
+          "BAD FILENAME #{Regexp.last_match[1]}"
         end
         puts
       when /^NEW$/i

@@ -43,7 +43,7 @@ module Redbasic
       number.to_s.upcase
     end
 
-    def beval(int)
+    def beval(_)
       number
     end
   end
@@ -53,7 +53,7 @@ module Redbasic
       string.inspect
     end
 
-    def beval(int)
+    def beval(_)
       string
     end
   end
@@ -66,15 +66,15 @@ module Redbasic
     def beval(int)
       l = left.beval(int)
       r = right.beval(int)
-      if !(l.is_a?(Numeric) && r.is_a?(Numeric))
-        raise Error.new("Both arguments to an operation must be numbers", int)
+      unless l.is_a?(Numeric) && r.is_a?(Numeric)
+        fail Error.new('Both arguments to an operation must be numbers', int)
       end
       case op
-      when "+" then l + r
-      when "-" then l - r
-      when "*" then l * r
-      when "/" then l / r
-      when "^" then l ** r
+      when '+' then l + r
+      when '-' then l - r
+      when '*' then l * r
+      when '/' then l / r
+      when '^' then l**r
       end
     end
   end
@@ -88,12 +88,12 @@ module Redbasic
       l = left.beval(int)
       r = right.beval(int)
       case relation
-      when ">"  then l > r
-      when ">=" then l >= r
-      when "<"  then l < r
-      when "<=" then l <= r
-      when "="  then l == r
-      when "<>" then l != r
+      when '>'  then l > r
+      when '>=' then l >= r
+      when '<'  then l < r
+      when '<=' then l <= r
+      when '='  then l == r
+      when '<>' then l != r
       end
     end
   end
@@ -104,9 +104,7 @@ module Redbasic
     end
 
     def beval(int)
-      if relation.beval(int)
-        int.next_line = line
-      end
+      int.next_line = line if relation.beval(int)
     end
   end
 
@@ -122,7 +120,7 @@ module Redbasic
 
   Read = Struct.new(:vars) do
     def to_basic
-      "READ #{vars.map(&:to_basic).join(", ")}"
+      "READ #{vars.map(&:to_basic).join(', ')}"
     end
 
     def beval(int)
@@ -130,7 +128,7 @@ module Redbasic
       vars.each do |var|
         datum = int.data.shift
         if datum.nil?
-          raise Error.new("Out of data", int)
+          fail Error.new('Out of data', int)
         else
           int[var.varname.to_sym] = datum.beval(int)
         end
@@ -140,7 +138,7 @@ module Redbasic
 
   Data = Struct.new(:values) do
     def to_basic
-      "DATA #{values.map(&:to_basic).join(", ")}"
+      "DATA #{values.map(&:to_basic).join(', ')}"
     end
 
     def beval(int); end
@@ -148,12 +146,12 @@ module Redbasic
 
   Print = Struct.new(:exprs) do
     def to_basic
-      "PRINT #{exprs.map(&:to_basic).join(", ")}"
+      "PRINT #{exprs.map(&:to_basic).join(', ')}"
     end
 
     def beval(int)
-      # TODO use real print specification
-      output = exprs.map { |expr| expr.beval(int).to_s }.join("   ")
+      # TODO: use real print specification
+      output = exprs.map { |expr| expr.beval(int).to_s }.join('   ')
       puts output
     end
   end
@@ -168,9 +166,60 @@ module Redbasic
     end
   end
 
+  ForLoop = Struct.new(:var, :from, :to, :step) do
+    def to_basic
+      output = "FOR #{var.to_basic} = #{from.to_basic} TO #{to.to_basic}"
+      output += " STEP #{step.to_basic}"
+      output
+    end
+
+    def beval(int)
+      varname = var.varname.to_sym
+      bstep = step.beval(int)
+      direction = bstep >= 0 ? :forward : :backward
+      past_to = lambda do |num|
+        (direction == :forward && num > to.beval(int)) ||
+        (direction == :backward && num < to.beval(int))
+      end
+
+      current_for_loop = int.forloops.last
+      if current_for_loop && current_for_loop.first == varname
+        int[varname] += bstep
+      else
+        int.forloops.push([varname, int.current_line])
+        int[varname] = from.beval(int)
+      end
+
+      if past_to[int[varname]]
+        next_lineno = int.find_matching_fornext(var)
+        int.forloops.pop
+        if next_lineno
+          int.next_line = int.find_next_line(nil, next_lineno)
+        else
+          fail Error.new('FOR without matching NEXT', int)
+        end
+      end
+    end
+  end
+
+  ForNext = Struct.new(:var) do
+    def to_basic
+      "NEXT #{var.to_basic}"
+    end
+
+    def beval(int)
+      varname = var.varname.to_sym
+      for_varname, for_line = int.forloops.last
+      unless varname == for_varname
+        fail Error.new('NEXT without matching FOR', int)
+      end
+      int.next_line = for_line
+    end
+  end
+
   class Terminate
     def to_basic
-      "END"
+      'END'
     end
 
     def beval(int)
